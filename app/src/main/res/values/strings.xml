@@ -6,4 +6,25 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+
+
+    <!-- times ago text-->
+    <string name="time_ago_prefix"> </string>
+    <string name="time_ago_suffix">ago</string>
+    <string name="time_ago_seconds">less than a minute</string>
+    <string name="time_ago_minute">about a minute</string>
+    <string name="time_ago_minutes">%d minutes</string>
+    <string name="time_ago_hour">about an hour</string>
+    <string name="time_ago_hours">about %d hours</string>
+    <string name="time_ago_day">a day</string>
+    <string name="time_ago_days">%d days</string>
+    <string name="time_ago_month">about a month</string>
+    <string name="time_ago_months">%d months</string>
+    <string name="time_ago_year">about a year</string>
+    <string name="time_ago_years">%d years</string>
+    <string name="oops_nothing_found">Oops !! Nothing Found</string>
+    <string name="try_other_page">Try other pages or</string>
+    <string name="go_to_home">" "go to home</string>
+
+
 </resources>
