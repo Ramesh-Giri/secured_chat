@@ -1,35 +1,35 @@
 {
   "project_info": {
-    "project_number": "990690788712",
-    "firebase_url": "https://dchat-603e7.firebaseio.com",
-    "project_id": "dchat-603e7",
-    "storage_bucket": "dchat-603e7.appspot.com"
+    "project_number": "947530781424",
+    "firebase_url": "https://d-chat-23ee1.firebaseio.com",
+    "project_id": "d-chat-23ee1",
+    "storage_bucket": "d-chat-23ee1.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:990690788712:android:8c74152927b02329",
+        "mobilesdk_app_id": "1:947530781424:android:bbd9132b20a8f0b2",
         "android_client_info": {
-          "package_name": "com.us.ramesh.securedchat"
+          "package_name": "com.us.ramesh.securechat"
         }
       },
       "oauth_client": [
         {
-          "client_id": "990690788712-bmt46qcha84or2rol71vdkjpciuogoep.apps.googleusercontent.com",
+          "client_id": "947530781424-9aubk0dsh2ep0010r1rbbfnigk7kqf79.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.us.ramesh.securedchat",
+            "package_name": "com.us.ramesh.securechat",
             "certificate_hash": "7e831d51b4b3e26a7970852a948c5fd31740416e"
           }
         },
         {
-          "client_id": "990690788712-scck3jafj67j3a7e1jucc4k7s5kvo40l.apps.googleusercontent.com",
+          "client_id": "947530781424-f35i9np8eg1iu861ktb2k732e9tg37hu.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDTpuB54HTWJDgWokGcMV2UB142dpLccOk"
+          "current_key": "AIzaSyBEXCh8oCGmEt274BcJyjDEaD-FiwZcg6g"
         }
       ],
       "services": {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "990690788712-scck3jafj67j3a7e1jucc4k7s5kvo40l.apps.googleusercontent.com",
+              "client_id": "947530781424-f35i9np8eg1iu861ktb2k732e9tg37hu.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

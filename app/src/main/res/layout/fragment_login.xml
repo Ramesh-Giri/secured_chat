@@ -1,112 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/side_nav_bar">
-
-    <!-- TODO: Update blank fragment layout -->
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="0.9"/>
+    android:background="@drawable/background">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_margin="20dp"
-        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:orientation="vertical">
 
         <ImageView
-            android:alpha="0.8"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:contentDescription="logo"
-            android:layout_marginBottom="20dp"
-            android:src="@drawable/ic_logo" />
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:src="@drawable/img_logo" />
 
-        <android.support.design.widget.TextInputLayout
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:text="@string/app_name"
+            android:textColor="@color/txt_black"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+
+        <EditText
+            android:id="@+id/et_loginEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@color/white">
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/edit_text_bg"
+            android:drawableLeft="@drawable/mail"
+            android:drawablePadding="10dp"
+            android:drawableStart="@drawable/mail"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:paddingLeft="10dp"
+            android:singleLine="true"
+            android:textColor="@color/txt_black"
+            android:textSize="18sp" />
 
-            <EditText
-                android:id="@+id/et_loginEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_email"
-                android:drawablePadding="10dp"
-                android:drawableStart="@drawable/ic_email"
-                android:hint="Email Address"
-                android:inputType="textEmailAddress"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white" />
-        </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <EditText
+            android:id="@+id/et_loginPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@color/white"
-            app:passwordToggleEnabled="true"
-            app:passwordToggleTint="@color/white">
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edit_text_bg"
+            android:drawableEnd="@drawable/view_pwd"
+            android:drawableLeft="@drawable/ic_pwd"
+            android:drawablePadding="10dp"
+            android:drawableRight="@drawable/view_pwd"
+            android:drawableStart="@drawable/ic_pwd"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:paddingLeft="10dp"
+            android:paddingRight="8dp"
+            android:textColor="@color/txt_black"
+            android:textSize="18sp" />
 
-            <EditText
-                android:id="@+id/et_loginPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_password"
-                android:drawablePadding="10dp"
-                android:drawableStart="@drawable/ic_password"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white" />
-        </android.support.design.widget.TextInputLayout>
 
-        <android.support.v7.widget.AppCompatButton
+        <Button
             android:id="@+id/btn_Login"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:layout_marginTop="24dp"
-            android:padding="12dp"
-            android:text="Login" />
+            android:layout_gravity="center"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/btn_bg"
+            android:text="SIGN IN"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_forgetPassword"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Forgot your password?"
-            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:text="Forgot Password?"
+            android:textAlignment="center"
+            android:textColor="@color/txt_black"
             android:textSize="16sp" />
-
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal">
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp">
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="No account yet? "
-                android:textSize="16sp" />
-
+                android:text="New User?" />
 
             <TextView
                 android:id="@+id/textSignup"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Create one"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:text=" Sign Up"
+                android:textColor="@color/purple" />
+
         </LinearLayout>
+
     </LinearLayout>
+
 
 </RelativeLayout>

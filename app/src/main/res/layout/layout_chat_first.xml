@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:id="@+id/message_single_layout"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:padding="10dp"
+android:weightSum="10">
+
+<com.pkmmte.view.CircularImageView
+    android:id="@+id/cv_current_image"
+    android:layout_width="40dp"
+    android:layout_alignParentRight="true"
+    android:layout_height="40dp"
+    android:src="@drawable/ic_user" />
+
+<TextView
+    android:id="@+id/tv_message"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="10dp"
+    android:background="@drawable/bg_sent_chat"
+    android:layout_toLeftOf="@+id/cv_current_image"
+    android:padding="10dp"
+    android:textColor="@color/txt_black"
+    android:textSize="14sp" />
+
+
+
+<!--<ImageView
+    android:id="@+id/message_image_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:layout_alignLeft="@+id/tv_message"
+    android:layout_below="@+id/tv_message"
+    android:layout_marginLeft="0dp"
+    android:layout_toRightOf="@+id/cv_current_image"
+    android:padding="0dp"
+    android:scaleType="centerCrop" />-->
+
+
+</RelativeLayout>
