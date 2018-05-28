@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:background="@color/bg_blue">
 
 
@@ -32,19 +33,26 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-
                     android:orientation="vertical"
                     android:layout_width="0dp"
                     android:layout_marginBottom="10dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
 
-                    <com.pkmmte.view.CircularImageView
+
+
+                    <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/user_ProfileImage"
+                        fresco:roundedCornerRadius="5dp"
+                        fresco:roundBottomStart="false"
+                        fresco:roundBottomEnd="false"
+                        fresco:roundingBorderWidth="1dp"
+                        fresco:roundAsCircle="true"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_user" />
+                        fresco:placeholderImage="@drawable/ic_user" />
+
 
                     <Button
                         android:id="@+id/btn_EditProfile"

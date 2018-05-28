@@ -103,11 +103,6 @@ public class ShowUsers extends AppCompatActivity implements SwipeRefreshLayout.O
         }
     }
 
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
     public void showData() {
 
 
@@ -167,7 +162,7 @@ public class ShowUsers extends AppCompatActivity implements SwipeRefreshLayout.O
         return (super.onOptionsItemSelected(menuItem));
     }
 
-    public void initToolbar(){
+    public void initToolbar() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

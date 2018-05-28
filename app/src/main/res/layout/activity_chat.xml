@@ -67,15 +67,16 @@
 
             />
 
-        <ImageButton
+
+        <ImageView
             android:layout_marginLeft="10dp"
             android:layout_gravity="center"
             android:id="@+id/btn_encrypt"
             android:layout_width="0dp"
             android:layout_weight="0.8"
             android:layout_height="22dp"
-            android:background="@drawable/ic_lock"
-             />
+            android:background="@drawable/ic_unlock"
+            android:src="@drawable/enc_selector" />
 
         <EditText
             android:layout_gravity="center"

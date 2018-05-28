@@ -29,6 +29,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -78,7 +79,7 @@ public class DashboardActivity extends AppCompatActivity
 
 
     private TextView profileName;
-    private CircularImageView profileImage;
+    private SimpleDraweeView profileImage;
     private TextView profileEmail;
 
     private String userId;
@@ -138,29 +139,6 @@ public class DashboardActivity extends AppCompatActivity
         }
     }
 
-   /* @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-*/
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -204,9 +182,7 @@ public class DashboardActivity extends AppCompatActivity
         String profileImg = mPrefs.getAccountProfileImage();
         if (profileImg != null && !profileImg.equals("")) {
             Uri profileUri = Uri.parse(mPrefs.getAccountProfileImage());
-            Picasso.with(this)
-                    .load(profileUri)
-                    .into(profileImage);
+            profileImage.setImageURI(profileUri);
         }
         profileName.setText(mPrefs.getAccountName());
         profileEmail.setText(mPrefs.getAccountEmail());

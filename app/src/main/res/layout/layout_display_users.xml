@@ -1,54 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cv_userDetails"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
     android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp">
+    android:layout_marginRight="8dp"
+    android:layout_marginTop="8dp">
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#F1F1F1"
         android:orientation="horizontal">
 
-        <com.pkmmte.view.CircularImageView
-            android:id="@+id/cv_ProfileImage"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/ic_user" />
+        <RelativeLayout
+            android:id="@+id/imagenstat"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="8dp">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/cv_ProfileImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                fresco:placeholderImage="@drawable/ic_user"
+                fresco:roundAsCircle="true"
+                fresco:roundBottomEnd="false"
+                fresco:roundBottomStart="false"
+                fresco:roundedCornerRadius="5dp"
+                fresco:roundingBorderWidth="1dp" />
+
+            <ImageView
+                android:id="@+id/iv_active"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/cv_ProfileImage"
+                android:layout_marginTop="30dp"
+
+
+                />
+        </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/name_stat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginLeft="10dp"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@+id/imagenstat"
             android:orientation="vertical">
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:layout_height="wrap_content"
                     android:id="@+id/tv_ProfileName"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Ramesh Giri"
                     android:textColor="@color/txt_black"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <ImageView
-                    android:layout_marginLeft="20dp"
-                    android:layout_gravity="bottom"
-                    android:id="@+id/iv_active"
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
 
-                    />
             </LinearLayout>
 
 
@@ -62,7 +83,14 @@
 
         </LinearLayout>
 
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_right_arrow" />
 
-    </LinearLayout>
+
+    </RelativeLayout>
 
 </android.support.v7.widget.CardView>

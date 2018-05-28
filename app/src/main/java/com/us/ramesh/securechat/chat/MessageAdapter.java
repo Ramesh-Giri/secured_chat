@@ -1,34 +1,38 @@
 package com.us.ramesh.securechat.chat;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
 import com.us.ramesh.securechat.R;
+import com.us.ramesh.securechat.Utils.SecureChatPreference;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleStringRecyclerViewAdapter> {
 
     private List<MessageModel> mMessageList;
-    private DatabaseReference mUserDatabase;
 
     private int TYPE_SEND = 10;
     private int TYPE_RECEIVED = 11;
+    ArrayList<MessageModel> data;
+
+    private SecureChatPreference mPrefs;
+
 
     private FirebaseAuth mAuth;
     Context ctx;
@@ -53,7 +57,7 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
         if (viewType == TYPE_SEND) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_chat_first, parent, false);
             viewHolder = new MessageAdapter.SimpleStringRecyclerViewAdapter(v);
-        }else {
+        } else {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_chat_second, parent, false);
             viewHolder = new MessageAdapter.SimpleStringRecyclerViewAdapter(v);
         }
@@ -63,63 +67,48 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
 
     @Override
     public void onBindViewHolder(final MessageAdapter.SimpleStringRecyclerViewAdapter viewHolder, int position) {
-        MessageModel c = mMessageList.get(position);
-        mAuth = FirebaseAuth.getInstance();
+        MessageModel data = mMessageList.get(position);
 
-        String current_user_id = mAuth.getCurrentUser().getUid();
 
-        String from_user = c.getFrom();
-        viewHolder.messageText.setText(c.getMessage());
+        if (getItemViewType(position) == TYPE_RECEIVED) {
+            String message = data.getMessage();
 
-        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(from_user);
-
-        mUserDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                String image = dataSnapshot.child("thumbImage").getValue().toString();
-
-                Picasso.with(viewHolder.profImage.getContext()).load(image)
-                        .placeholder(R.drawable.ic_user).into(viewHolder.profImage);
-
+            if (message != null) {
+                viewHolder.senderSentImageCard.setVisibility(View.GONE);
+                viewHolder.receivedMessage.setText(message);
+                viewHolder.senderSentImage.setVisibility(View.GONE);
+                viewHolder.receivedMessage.setVisibility(View.VISIBLE);
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-        if (from_user != null && from_user.equals(current_user_id)) {
-
-            viewHolder.messageText.setBackgroundResource(R.drawable.bg_sent_chat);
-            viewHolder.messageText.setTextColor(Color.parseColor("#3E4143"));
-
-            RelativeLayout.LayoutParams layoutParams =
-                    (RelativeLayout.LayoutParams) viewHolder.profImage.getLayoutParams();
-            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
-
-            RelativeLayout.LayoutParams layoutParams1 =
-                    (RelativeLayout.LayoutParams) viewHolder.messageText.getLayoutParams();
-            layoutParams1.addRule(RelativeLayout.LEFT_OF, R.id.cv_current_image);
-
+            viewHolder.senderImage.setImageURI(Uri.parse(receiver_image));
 
         } else {
-            viewHolder.messageText.setBackgroundResource(R.drawable.bg_received_chat);
-            viewHolder.messageText.setTextColor(Color.parseColor("#FFFFFF"));
+            String message = data.getMessage();
 
-            RelativeLayout.LayoutParams layoutParams =
-                    (RelativeLayout.LayoutParams) viewHolder.profImage.getLayoutParams();
-            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+            if (message != null) {
+                viewHolder.sentImageCard.setVisibility(View.GONE);
+                viewHolder.currentMessage.setText(message);
+                viewHolder.sentImage.setVisibility(View.GONE);
+                viewHolder.currentMessage.setVisibility(View.VISIBLE);
+            }
 
-            RelativeLayout.LayoutParams layoutParams1 =
-                    (RelativeLayout.LayoutParams) viewHolder.messageText.getLayoutParams();
-            layoutParams1.addRule(RelativeLayout.RIGHT_OF, R.id.cv_current_image);
-
+            mPrefs = new SecureChatPreference(ctx);
+            viewHolder.currentImage.setImageURI(Uri.parse(mPrefs.getAccountProfileImage()));
 
         }
 
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        mAuth = FirebaseAuth.getInstance();
+        String mCurrentUser = mAuth.getCurrentUser().getUid();
+        MessageModel model = mMessageList.get(position);
+        if (model.getFrom().equals(mCurrentUser)) {
+            return TYPE_SEND;
+        } else {
+            return TYPE_RECEIVED;
+        }
     }
 
 
@@ -136,15 +125,43 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
     public class SimpleStringRecyclerViewAdapter extends RecyclerView.ViewHolder {
 
 
-        public TextView messageText;
-        public CircularImageView profImage;
+        TextView uId, currentMessage,  senderId, receivedMessage;
+        ImageView sentImage, senderSentImage;
+        CardView sentImageCard, senderSentImageCard;
+
+        SimpleDraweeView currentImage,senderImage;
+        LinearLayout MessageRow;
+
 
         public SimpleStringRecyclerViewAdapter(View itemView) {
             super(itemView);
 
 
-            messageText = itemView.findViewById(R.id.tv_message);
-            profImage = itemView.findViewById(R.id.cv_current_image);
+            // Layout for user
+            uId = itemView.findViewById(R.id.uTime);
+            currentMessage = itemView.findViewById(R.id.uMessage);
+            currentImage = itemView.findViewById(R.id.uImage);
+            sentImage = itemView.findViewById(R.id.sentImage);
+            sentImageCard = itemView.findViewById(R.id.sentImageCard);
+            MessageRow= itemView.findViewById(R.id.userMessagesRow);
+
+            // Layout for friend
+            senderId = itemView.findViewById(R.id.senderTime);
+            receivedMessage = itemView.findViewById(R.id.senderMessage);
+            senderImage = itemView.findViewById(R.id.senderImage);
+            senderSentImage = itemView.findViewById(R.id.senderSentImage);
+            senderSentImageCard = itemView.findViewById(R.id.senderSentImageCard);
+            MessageRow= itemView.findViewById(R.id.userMessagesRow);
+
+            MessageRow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    String hello =  data.get(getAdapterPosition()).getMessage();
+                    Toast.makeText(ctx, hello, Toast.LENGTH_SHORT).show();
+                }
+            });
+
         }
     }
 }

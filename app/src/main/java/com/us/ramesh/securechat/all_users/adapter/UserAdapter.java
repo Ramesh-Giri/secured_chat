@@ -1,7 +1,9 @@
 package com.us.ramesh.securechat.all_users.adapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.CardView;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
 import com.us.ramesh.securechat.R;
@@ -70,14 +73,11 @@ public class UserAdapter extends RecyclerSwipeAdapter<UserAdapter.SimpleStringRe
         String profileImg = data.getThumbImage();
         if (profileImg != null && !profileImg.equals("-")) {
             Uri profileUri = Uri.parse(profileImg);
-            Picasso.with(c)
-                    .load(profileUri)
-                    .into(viewHolder.usrImage);
+            viewHolder.usrImage.setImageURI(profileUri);
         }
 
         Boolean act = data.getActive();
-        if (act)
-        {
+        if (act) {
             viewHolder.iv_active.setImageResource(R.drawable.ic_online);
         }
     }
@@ -104,7 +104,7 @@ public class UserAdapter extends RecyclerSwipeAdapter<UserAdapter.SimpleStringRe
         TextView uname, uStatus;
         ImageView iv_active;
 
-        CircularImageView usrImage;
+        SimpleDraweeView usrImage;
         CardView userRow;
 
         public SimpleStringRecyclerViewAdapter(View itemView) {
@@ -123,21 +123,38 @@ public class UserAdapter extends RecyclerSwipeAdapter<UserAdapter.SimpleStringRe
                 @Override
                 public void onClick(View v) {
 
+                    CharSequence options[] = new CharSequence[]{"Open profile", "Send Message"};
 
-                    /* ----------------Take Data to userDetails---------------*//*
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(c);
+                    builder.setTitle("Select Options");
+                    builder.setItems(options, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int i) {
 
-                    Intent intent = new Intent(c, FriendsDetail.class);
-                    intent.putExtra("receiverId", userData.get(getAdapterPosition()).getId());
-                    c.startActivity(intent);
-                    ((Activity) c).finish();*/
 
-                    Intent intent = new Intent(c, ChatActivity.class);
-                    intent.putExtra("receiverId", userData.get(getAdapterPosition()).getId());
-                    intent.putExtra("receiverName", userData.get(getAdapterPosition()).getFullname());
-                    intent.putExtra("receiverImage", userData.get(getAdapterPosition()).getThumbImage());
+                            if (i == 0) {
+                                /* ----------------Take Data to userDetails---------------*/
+                                Intent intent = new Intent(c, FriendsDetail.class);
+                                intent.putExtra("receiverId", userData.get(getAdapterPosition()).getId());
+                                c.startActivity(intent);
+                                ((Activity) c).finish();
+                            }
+                            if (i == 1) {
+                                Intent intent = new Intent(c, ChatActivity.class);
+                                intent.putExtra("receiverId", userData.get(getAdapterPosition()).getId());
+                                intent.putExtra("receiverName", userData.get(getAdapterPosition()).getFullname());
+                                intent.putExtra("receiverImage", userData.get(getAdapterPosition()).getThumbImage());
 
-                    c.startActivity(intent);
-                    ((Activity) c).finish();
+                                c.startActivity(intent);
+                                ((Activity) c).finish();
+                            }
+                        }
+
+                    });
+
+                    AlertDialog alert = builder.create();
+                    alert.show();
+
                 }
             });
 

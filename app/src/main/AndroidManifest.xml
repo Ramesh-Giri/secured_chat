@@ -42,6 +42,7 @@
         <activity android:name="com.us.ramesh.securechat.login.ResetPasswordActivity" />
 
         <activity android:name="com.us.ramesh.securechat.all_users.activity.ShowUsers" />
+        <activity android:name="com.us.ramesh.securechat.all_chats.AllChatsActivity" />
         <activity android:name="com.us.ramesh.securechat.chat.ChatActivity" />
 
         <activity android:name="com.us.ramesh.securechat.all_users.activity.FriendsDetail" />

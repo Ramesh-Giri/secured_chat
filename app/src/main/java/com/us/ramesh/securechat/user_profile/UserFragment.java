@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -45,7 +47,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class UserFragment extends Fragment {
 
-    CircularImageView user_ProfileImage;
+    SimpleDraweeView user_ProfileImage;
     TextView user_ProfileName, user_ProfileStatus, user_ProfileEmail, user_ProfileAddress, user_ProfileNumber, user_ProfileGender, user_ProfileInterest;
 
     Button btn_EditProfile;
@@ -107,9 +109,10 @@ public class UserFragment extends Fragment {
         String profileImg = mPrefs.getAccountProfileImage();
         if (profileImg != null && !profileImg.equals("")) {
             Uri profileUri = Uri.parse(mPrefs.getAccountProfileImage());
-            Picasso.with(getActivity())
-                    .load(profileUri)
-                    .into(user_ProfileImage);
+
+
+            user_ProfileImage.setImageURI(profileUri);
+
         }
         user_ProfileName.setText(mPrefs.getAccountName());
         user_ProfileEmail.setText(mPrefs.getAccountEmail());

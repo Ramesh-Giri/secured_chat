@@ -10,11 +10,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.text.method.PasswordTransformationMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -28,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
 import com.us.ramesh.securechat.R;
+import com.us.ramesh.securechat.Utils.AESEncryption;
 import com.us.ramesh.securechat.all_users.activity.ShowUsers;
 
 import java.util.ArrayList;
@@ -47,9 +51,11 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     private String mCurrentUserId;
 
     private ImageButton btn_add_images;
-    private ImageButton btn_encrypt;
+    private ImageView btn_encrypt;
+    private boolean enc;
     private EditText et_message;
     private Button btn_send;
+
 
     private RecyclerView rv_messagesList;
 
@@ -65,6 +71,14 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     private int itemPosition = 0;
     private String mLastKey = "";
     private String mPrevKey = "";
+
+    String message;
+    String encMessage;
+
+    /**
+     * AES class variable
+     **/
+    private AESEncryption aesEncryption = null;
 
 
     @Override
@@ -92,6 +106,11 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         mSwipeRefreshLayout = findViewById(R.id.swipeChatLayout);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
+        try {
+            aesEncryption = new AESEncryption(receiver_id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         rv_messagesList = findViewById(R.id.rv_Chatlist);
 
@@ -101,6 +120,22 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         rv_messagesList.setLayoutManager(mLinearLayoutmanager);
         mMessageAdapter.setImage(receiver_Image);
         rv_messagesList.setAdapter(mMessageAdapter);
+
+        btn_encrypt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (btn_encrypt.isSelected()) {
+                    btn_encrypt.setSelected(false);
+                    enc = false;
+
+                } else {
+                    btn_encrypt.setSelected(true);
+                    enc = true;
+
+
+                }
+            }
+        });
 
         loadmessages();
 
@@ -154,7 +189,21 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendmessage();
+                message = et_message.getText().toString();
+
+                if (enc) {
+                    /* Encrypted message is send */
+                    try {
+                        encMessage = aesEncryption.encrypt(message);
+                        sendmessage(encMessage);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    /* Normal message is send */
+                    sendmessage(message);
+                }
             }
         });
 
@@ -162,11 +211,9 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
 
-    public void sendmessage() {
+    public void sendmessage(String msg) {
 
-        String message = et_message.getText().toString();
-
-        if (!TextUtils.isEmpty(message)) {
+        if (!TextUtils.isEmpty(msg)) {
 
             String current_user_ref = "Messages/" + mCurrentUserId + "/" + receiver_id;
             String chat_user_ref = "Messages/" + receiver_id + "/" + mCurrentUserId;
@@ -176,7 +223,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
             String push_id = user_msg_push.getKey();
 
             Map messageMap = new HashMap();
-            messageMap.put("message", message);
+            messageMap.put("message", msg);
             messageMap.put("seen", false);
             messageMap.put("type", "text");
             messageMap.put("time", ServerValue.TIMESTAMP);
@@ -229,7 +276,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 
                 mMessageAdapter.notifyDataSetChanged();
-                mLinearLayoutmanager.scrollToPositionWithOffset(itemPosition-1, 0);
+                mLinearLayoutmanager.scrollToPositionWithOffset(itemPosition - 1, 0);
 
 
                 if (mSwipeRefreshLayout.isRefreshing()) {
@@ -266,10 +313,10 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         messageList.clear();
 
         DatabaseReference messageRef = mRootRef.child("Messages").child(mCurrentUserId).child(receiver_id);
-        //Query messageQuery = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
+        Query messageQuery = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
 
 
-        messageRef.addChildEventListener(new ChildEventListener() {
+        messageQuery.addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -279,7 +326,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                     MessageModel mModel = dataSnapshot.getValue(MessageModel.class);
 
-                   /* itemPosition++;
+                    itemPosition++;
 
 
                     if (itemPosition == 1) {
@@ -287,7 +334,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                         mLastKey = messageKey;
                         mPrevKey = messageKey;
 
-                    }*/
+                    }
 
                     messageList.add(mModel);
                     mMessageAdapter.notifyDataSetChanged();
@@ -348,8 +395,8 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public void onRefresh() {
 
-        /*mCurrentPage++;
-        itemPosition = 0;*/
-        loadmessages();
+        mCurrentPage++;
+        itemPosition = 0;
+        loadMoreMessages();
     }
 }

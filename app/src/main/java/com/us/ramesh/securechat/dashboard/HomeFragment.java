@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.us.ramesh.securechat.R;
+import com.us.ramesh.securechat.all_chats.AllChatsActivity;
 import com.us.ramesh.securechat.all_users.activity.ShowUsers;
 import com.us.ramesh.securechat.user_profile.UserFragment;
 
@@ -41,6 +42,15 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+
+       /* img_messages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), AllChatsActivity.class);
+                startActivity(intent);
+            }
+        });*/
 
         return view;
     }

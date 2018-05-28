@@ -1,6 +1,5 @@
 package com.us.ramesh.securechat.all_users.activity;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,19 +9,18 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
 import com.us.ramesh.securechat.R;
-import com.us.ramesh.securechat.Utils.NetworkUtils;
 
 public class FriendsDetail extends AppCompatActivity {
 
-    CircularImageView user_ProfileImage;
+    SimpleDraweeView user_ProfileImage;
     TextView user_ProfileName, user_ProfileStatus, user_ProfileEmail, user_ProfileAddress, user_ProfileNumber, user_ProfileGender, user_ProfileInterest;
 
     Button btn_EditProfile;
@@ -91,9 +89,8 @@ public class FriendsDetail extends AppCompatActivity {
 
                     if (profileImg != null && !profileImg.equals("")) {
                         Uri profileUri = Uri.parse(profileImg);
-                        Picasso.with(FriendsDetail.this)
-                                .load(profileUri)
-                                .into(user_ProfileImage);
+                        user_ProfileImage.setImageURI(profileUri);
+
                     }
                     user_ProfileAddress.setText(dataSnapshot.child("address").getValue().toString());
                     user_ProfileGender.setText(dataSnapshot.child("gender").getValue().toString());
