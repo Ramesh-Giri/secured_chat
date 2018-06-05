@@ -183,9 +183,16 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
-                                    Toast.makeText(ctx, decString, Toast.LENGTH_SHORT).show();
+                                    if(decString != null && decString.length() >0) {
+                                        Toast.makeText(ctx, decString, Toast.LENGTH_SHORT).show();
+                                        decString= "";
+                                    }else {
+                                        Toast.makeText(ctx, "Cannot decrpyt", Toast.LENGTH_SHORT).show();
+                                    }
 
-                                    decString= "";
+
+
+
                                 }
                             }
 
