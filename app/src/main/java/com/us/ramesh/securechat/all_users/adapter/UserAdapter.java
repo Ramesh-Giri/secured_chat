@@ -14,11 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.pkmmte.view.CircularImageView;
-import com.squareup.picasso.Picasso;
 import com.us.ramesh.securechat.R;
 import com.us.ramesh.securechat.all_users.activity.FriendsDetail;
 import com.us.ramesh.securechat.chat.ChatActivity;
@@ -140,6 +137,7 @@ public class UserAdapter extends RecyclerSwipeAdapter<UserAdapter.SimpleStringRe
                                 ((Activity) c).finish();
                             }
                             if (i == 1) {
+
                                 Intent intent = new Intent(c, ChatActivity.class);
                                 intent.putExtra("receiverId", userData.get(getAdapterPosition()).getId());
                                 intent.putExtra("receiverName", userData.get(getAdapterPosition()).getFullname());

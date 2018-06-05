@@ -9,5 +9,8 @@
 
     <color name="bg_blue">#BCC1C6</color>
     <color name="txt_black">#3E4143</color>
+    <color name="txt_black_faded">#3E414300</color>
+    <color name="about_black">#666666</color>
+    <color name="black">#000000</color>
     <color name="green_bright">#007E39</color>
 </resources>

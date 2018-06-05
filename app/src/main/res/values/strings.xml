@@ -26,6 +26,16 @@
     <string name="oops_nothing_found">Oops !! Nothing Found</string>
     <string name="try_other_page">Try other pages or</string>
     <string name="go_to_home">" "go to home</string>
+    <string name="title_activity_about_us">AboutUsActivity</string>
+
+    <string name="app_desc">share your message as an image</string>
+
+    <string name="about_desc"> Secured Chat is an android application that lets users to communicate in a secured way.
+        Users can send plain text as well as can encrypt the text with images they want.
+        \n\nWhile encrypting, the plain text is first encrypted to cypher text, which is then combined along with the
+        image and sent to the receiver.
+
+        </string>
 
 
 </resources>

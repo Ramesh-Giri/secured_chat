@@ -57,13 +57,13 @@
                     <Button
                         android:id="@+id/btn_EditProfile"
                         android:layout_width="120dp"
-                        android:layout_height="30dp"
+                        android:layout_height="40dp"
                         android:layout_gravity="center"
                         android:layout_marginBottom="16dp"
                         android:layout_marginTop="10dp"
                         android:drawableLeft="@drawable/ic_edit"
                         android:paddingLeft="5dp"
-                        android:background="@drawable/btn_bg"
+                        android:background="@drawable/bg_small_btn"
                         android:text="Edit Profile"
                         android:textColor="@color/white"
                         android:textSize="12sp"
@@ -111,10 +111,10 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="0.01dp"
+                android:layout_height="0.1dp"
                 android:layout_marginBottom="10dp"
-                android:background="#EAEAEA"
-                android:elevation="5dp" />
+                android:background="@color/txt_black_faded"
+                />
 
             <ScrollView
                 android:layout_width="wrap_content"
@@ -161,9 +161,9 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
+                        android:layout_height="0.1dp"
                         android:layout_margin="10dp"
-                        android:background="#EAEAEA" />
+                        android:background="@color/txt_black_faded" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -197,9 +197,9 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
+                        android:layout_height="0.1dp"
                         android:layout_margin="10dp"
-                        android:background="#EAEAEA" />
+                        android:background="@color/txt_black_faded" />
 
 
                     <LinearLayout
@@ -235,9 +235,9 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
+                        android:layout_height="0.1dp"
                         android:layout_margin="10dp"
-                        android:background="#EAEAEA" />
+                        android:background="@color/txt_black_faded" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -271,9 +271,9 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
+                        android:layout_height="0.1dp"
                         android:layout_margin="10dp"
-                        android:background="#EAEAEA" />
+                        android:background="@color/txt_black_faded" />
 
 
                     <LinearLayout

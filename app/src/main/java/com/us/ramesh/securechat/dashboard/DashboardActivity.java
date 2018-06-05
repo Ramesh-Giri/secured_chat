@@ -1,63 +1,39 @@
 package com.us.ramesh.securechat.dashboard;
 
-import android.app.ActionBar;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.us.ramesh.securechat.aboutus.AboutUsActivity;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.pkmmte.view.CircularImageView;
-import com.squareup.picasso.Picasso;
-import com.theartofdev.edmodo.cropper.CropImage;
 import com.us.ramesh.securechat.MainActivity;
 import com.us.ramesh.securechat.R;
 import com.us.ramesh.securechat.Utils.NetworkUtils;
 import com.us.ramesh.securechat.Utils.SecureChatPreference;
+import com.us.ramesh.securechat.feedback.FeedbackActivity;
 import com.us.ramesh.securechat.user_profile.UserFragment;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import id.zelory.compressor.Compressor;
 
 
 /**
@@ -151,6 +127,18 @@ public class DashboardActivity extends AppCompatActivity
         } else if (id == R.id.nav_logout) {
 
             Logout();  //Logout code
+
+
+        } else if (id == R.id.nav_feedback) {
+
+            Intent intent = new Intent(DashboardActivity.this, FeedbackActivity.class);
+            startActivity(intent);
+
+
+        }else if (id == R.id.nav_aboutUs) {
+
+            Intent intent = new Intent(DashboardActivity.this, AboutUsActivity.class);
+            startActivity(intent);
 
 
         }

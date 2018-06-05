@@ -8,9 +8,6 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.FirebaseDatabase;
 
-/**
- * Created by ramesh on 3/14/18.
- */
 
 public class SecuredChat extends Application {
     @Override

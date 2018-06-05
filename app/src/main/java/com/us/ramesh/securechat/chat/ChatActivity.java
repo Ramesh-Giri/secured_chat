@@ -10,14 +10,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.text.method.PasswordTransformationMethod;
+import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -31,14 +30,16 @@ import com.google.firebase.database.ValueEventListener;
 import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
 import com.us.ramesh.securechat.R;
-import com.us.ramesh.securechat.Utils.AESEncryption;
 import com.us.ramesh.securechat.all_users.activity.ShowUsers;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 
 public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -75,11 +76,6 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     String message;
     String encMessage;
 
-    /**
-     * AES class variable
-     **/
-    private AESEncryption aesEncryption = null;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,12 +102,6 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         mSwipeRefreshLayout = findViewById(R.id.swipeChatLayout);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        try {
-            aesEncryption = new AESEncryption(receiver_id);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         rv_messagesList = findViewById(R.id.rv_Chatlist);
 
         mMessageAdapter = new MessageAdapter(messageList, this);
@@ -131,7 +121,6 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 } else {
                     btn_encrypt.setSelected(true);
                     enc = true;
-
 
                 }
             }
@@ -193,12 +182,13 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                 if (enc) {
                     /* Encrypted message is send */
+
                     try {
-                        encMessage = aesEncryption.encrypt(message);
-                        sendmessage(encMessage);
+                        encMessage = encrypt(message,receiver_id);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    sendmessage(encMessage);
 
                 } else {
                     /* Normal message is send */
@@ -206,7 +196,6 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 }
             }
         });
-
 
     }
 
@@ -372,7 +361,6 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
@@ -398,5 +386,31 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         mCurrentPage++;
         itemPosition = 0;
         loadMoreMessages();
+
     }
+
+    public String encrypt(String msz, String pwd) throws Exception{
+
+        SecretKeySpec key = generateKey(pwd);
+        Cipher c = Cipher.getInstance("AES");
+        c.init(Cipher.ENCRYPT_MODE,key);
+
+        byte[] encVal = c.doFinal(msz.getBytes());
+        String encryptedValue  = Base64.encodeToString(encVal,Base64.DEFAULT);
+
+        return encryptedValue;
+
+    }
+
+    public static SecretKeySpec generateKey(String pwd) throws Exception{
+
+        final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] bytes = pwd.getBytes("UTF-8");
+        digest.update(bytes,0,bytes.length);
+        byte[] key = digest.digest();
+        SecretKeySpec secretKeySpec= new SecretKeySpec(key,"AES");
+        return secretKeySpec;
+
+    }
+
 }
