@@ -45,6 +45,7 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
 
 
     String FROM;
+
     public MessageAdapter(List<MessageModel> mMessageList, Context context) {
         this.mMessageList = mMessageList;
         this.ctx = context;
@@ -78,26 +79,51 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
 
         if (getItemViewType(position) == TYPE_RECEIVED) {
             String message = data.getMessage();
+            String image = data.getSentImage();
+            String type = data.getType();
 
-            if (message != null) {
-                viewHolder.senderSentImageCard.setVisibility(View.GONE);
-                viewHolder.receivedMessage.setText(message);
-                viewHolder.senderSentImage.setVisibility(View.GONE);
-                viewHolder.receivedMessage.setVisibility(View.VISIBLE);
+            if(type.equals("text")) {
+                if (message != null && message.length() > 0) {
+
+                    viewHolder.receivedMessage.setText(message);
+                    viewHolder.senderSentImage.setVisibility(View.GONE);
+                    viewHolder.senderSentImageCard.setVisibility(View.GONE);
+                    viewHolder.receivedMessage.setVisibility(View.VISIBLE);
+                }
+            }else {
+                if (image != null && image.length() > 0) {
+                    viewHolder.senderSentImageCard.setVisibility(View.VISIBLE);
+                    viewHolder.senderSentImage.setVisibility(View.VISIBLE);
+                    viewHolder.receivedMessage.setVisibility(View.GONE);
+                    Uri receivedImage = Uri.parse(image);
+                    viewHolder.senderSentImage.setImageURI(receivedImage);
+                }
             }
-
             viewHolder.senderImage.setImageURI(Uri.parse(receiver_image));
 
         } else {
             String message = data.getMessage();
+            String image = data.getSentImage();
+            String type = data.getType();
 
-            if (message != null) {
-                viewHolder.sentImageCard.setVisibility(View.GONE);
-                viewHolder.currentMessage.setText(message);
-                viewHolder.sentImage.setVisibility(View.GONE);
-                viewHolder.currentMessage.setVisibility(View.VISIBLE);
+            if(type.equals("text")) {
+
+                if (message != null && message.length() > 0) {
+                    viewHolder.sentImageCard.setVisibility(View.GONE);
+                    viewHolder.currentMessage.setText(message);
+                    viewHolder.sentImage.setVisibility(View.GONE);
+                    viewHolder.currentMessage.setVisibility(View.VISIBLE);
+                }
+            }else {
+                if (image != null && image.length() > 0) {
+                    viewHolder.sentImage.setVisibility(View.VISIBLE);
+                    viewHolder.sentImageCard.setVisibility(View.VISIBLE);
+                    viewHolder.currentMessage.setVisibility(View.GONE);
+
+                    Uri sentImage = Uri.parse(image);
+                    viewHolder.sentImage.setImageURI(sentImage);
+                }
             }
-
             mPrefs = new SecureChatPreference(ctx);
             viewHolder.currentImage.setImageURI(Uri.parse(mPrefs.getAccountProfileImage()));
 
@@ -111,7 +137,7 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
         mCurrentUser = mAuth.getCurrentUser().getUid();
         MessageModel model = mMessageList.get(position);
 
-        FROM= model.getFrom();
+        FROM = model.getFrom();
         if (model.getFrom().equals(mCurrentUser)) {
             return TYPE_SEND;
 
@@ -135,7 +161,7 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
 
 
         TextView uId, currentMessage, senderId, receivedMessage;
-        ImageView sentImage, senderSentImage;
+        SimpleDraweeView sentImage, senderSentImage;
         CardView sentImageCard, senderSentImageCard;
 
         SimpleDraweeView currentImage, senderImage;
@@ -163,45 +189,40 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
             MessageRow = itemView.findViewById(R.id.userMessagesRow);
 
 
-            MessageRow.setOnClickListener(new View.OnClickListener() {
+            MessageRow.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public void onClick(View v) {
+                public boolean onLongClick(View v) {
+                    CharSequence options[] = new CharSequence[]{"Decrypt"};
 
-                        CharSequence options[] = new CharSequence[]{"Decrypt"};
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+                    builder.setTitle("Select Options");
+                    builder.setItems(options, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int i) {
+                            String msz = mMessageList.get(getAdapterPosition()).getMessage();
 
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-                        builder.setTitle("Select Options");
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int i) {
-                                String msz = mMessageList.get(getAdapterPosition()).getMessage();
-
-                                if (i == 0) {
-
-                                    try {
-                                        decString = decrypt(msz, mCurrentUser);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    if(decString != null && decString.length() >0) {
-                                        Toast.makeText(ctx, decString, Toast.LENGTH_SHORT).show();
-                                        decString= "";
-                                    }else {
-                                        Toast.makeText(ctx, "Cannot decrpyt", Toast.LENGTH_SHORT).show();
-                                    }
-
-
-
-
+                            if (i == 0) {
+                                try {
+                                    decString = decrypt(msz, mCurrentUser);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
+                                if (decString != null && decString.length() > 0) {
+                                    Toast.makeText(ctx, decString, Toast.LENGTH_SHORT).show();
+                                    decString = "";
+                                } else {
+                                    Toast.makeText(ctx, "Cannot decrpyt", Toast.LENGTH_SHORT).show();
+                                }
+
+
                             }
+                        }
 
-                        });
-                        AlertDialog alert = builder.create();
-                        alert.show();
-
-                    }
-
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                    return false;
+                }
             });
         }
     }

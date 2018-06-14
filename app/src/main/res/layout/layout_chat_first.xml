@@ -46,7 +46,7 @@
                     app:cardCornerRadius="4dp"
                     app:cardElevation="0dp">
 
-                    <ImageView
+                    <com.facebook.drawee.view.SimpleDraweeView
                         android:maxHeight="200dp"
                         android:maxWidth="340dp"
                         android:id="@+id/sentImage"

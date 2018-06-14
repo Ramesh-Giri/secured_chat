@@ -2,7 +2,7 @@ package com.us.ramesh.securechat.chat;
 
 public class MessageModel {
 
-    String message, type,from;
+    String message, type,from,sentImage;
     long time;
     boolean seen;
 
@@ -56,5 +56,13 @@ public class MessageModel {
 
     public void setSeen(boolean seen) {
         this.seen = seen;
+    }
+
+    public String getSentImage() {
+        return sentImage;
+    }
+
+    public void setSentImage(String sentImage) {
+        this.sentImage = sentImage;
     }
 }
