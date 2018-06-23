@@ -46,5 +46,8 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.5.2'
     //picasso Library
 
+    implementation 'com.jaredrummler:animated-svg-view:1.0.5'
+
+
 }
 apply plugin: 'com.google.gms.google-services'

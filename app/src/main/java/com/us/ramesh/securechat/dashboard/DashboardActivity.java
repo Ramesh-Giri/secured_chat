@@ -52,6 +52,9 @@ public class DashboardActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
 
     private DrawerLayout drawer;
+    private int backPressedCount = 1;
+    private long backpressedTime;
+
 
 
     private TextView profileName;
@@ -91,7 +94,7 @@ public class DashboardActivity extends AppCompatActivity
 
         setNavHeader();
 
-        getSupportFragmentManager().beginTransaction().add(R.id.container_Dash, new HomeFragment()).addToBackStack(null).commitAllowingStateLoss();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container_Dash, new HomeFragment()).commit();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -111,7 +114,19 @@ public class DashboardActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (backPressedCount == 2) {
+                if (((System.currentTimeMillis() - backpressedTime) / 1000) <= 5)
+                    super.onBackPressed();
+                else {
+                    backPressedCount = 1;
+                    backpressedTime = System.currentTimeMillis();
+                    Toast.makeText(this, getString(R.string.press_back_again_to_exit), Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                backPressedCount++;
+                backpressedTime = System.currentTimeMillis();
+                Toast.makeText(this, getString(R.string.press_back_again_to_exit), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -223,9 +238,9 @@ public class DashboardActivity extends AppCompatActivity
 
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(DashboardActivity.this);
 
-            alertDialog.setMessage("Do you want to logout?");
+            alertDialog.setMessage("Are you handsome?");
 
-            alertDialog.setNegativeButton("No",
+            alertDialog.setNegativeButton("Yes",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog,
                                             int which) {
@@ -234,7 +249,7 @@ public class DashboardActivity extends AppCompatActivity
                         }
                     });
 
-            alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            alertDialog.setPositiveButton("No", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
 
 

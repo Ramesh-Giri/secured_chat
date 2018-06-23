@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/background">
 
     <LinearLayout
@@ -11,12 +12,19 @@
         android:layout_centerVertical="true"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/splash_logo"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+        <com.jaredrummler.android.widget.AnimatedSvgView
+            android:id="@+id/animated_svg_view"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
             android:layout_gravity="center"
-            android:src="@drawable/img_logo" />
+            app:animatedSvgFillColors="@array/google_glyph_colors"
+            app:animatedSvgGlyphStrings="@array/splash_svg_paths"
+            app:animatedSvgFillStart="1200"
+            app:animatedSvgFillTime="1000"
+            app:animatedSvgImageSizeX="1024"
+            app:animatedSvgImageSizeY="1024"
+            app:animatedSvgTraceTime="2500"
+            app:animatedSvgTraceTimePerGlyph="1000"/>
 
 
         <TextView
