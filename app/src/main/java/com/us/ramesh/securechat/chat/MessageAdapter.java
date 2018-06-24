@@ -20,8 +20,12 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.us.ramesh.securechat.R;
 import com.us.ramesh.securechat.Utils.SecureChatPreference;
+import com.us.ramesh.securechat.Utils.TimeAgo;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.crypto.Cipher;
@@ -99,6 +103,20 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
                     viewHolder.senderSentImage.setImageURI(receivedImage);
                 }
             }
+
+            Long timeStamp = data.getTime();
+
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String dateString = formatter.format(new Date(Long.parseLong(String.valueOf(timeStamp))));
+
+            TimeAgo timeAgo = new TimeAgo(ctx);
+            try {
+                Date  date1 = formatter.parse(dateString.split("\\.")[0]);
+                viewHolder.senderTime.setText(timeAgo.timeAgo(date1));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
             viewHolder.senderImage.setImageURI(Uri.parse(receiver_image));
 
         } else {
@@ -123,6 +141,19 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
                     Uri sentImage = Uri.parse(image);
                     viewHolder.sentImage.setImageURI(sentImage);
                 }
+            }
+
+            Long timeStamp = data.getTime();
+
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String dateString = formatter.format(new Date(Long.parseLong(String.valueOf(timeStamp))));
+
+            TimeAgo timeAgo = new TimeAgo(ctx);
+            try {
+                Date  date1 = formatter.parse(dateString.split("\\.")[0]);
+                viewHolder.uTime.setText(timeAgo.timeAgo(date1));
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
             mPrefs = new SecureChatPreference(ctx);
             viewHolder.currentImage.setImageURI(Uri.parse(mPrefs.getAccountProfileImage()));
@@ -160,7 +191,7 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
     public class SimpleStringRecyclerViewAdapter extends RecyclerView.ViewHolder {
 
 
-        TextView uId, currentMessage, senderId, receivedMessage;
+        TextView uTime, currentMessage, senderTime, receivedMessage;
         SimpleDraweeView sentImage, senderSentImage;
         CardView sentImageCard, senderSentImageCard;
 
@@ -173,7 +204,7 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
 
 
             // Layout for user
-            uId = itemView.findViewById(R.id.uTime);
+            uTime = itemView.findViewById(R.id.uTime);
             currentMessage = itemView.findViewById(R.id.uMessage);
             currentImage = itemView.findViewById(R.id.uImage);
             sentImage = itemView.findViewById(R.id.sentImage);
@@ -181,7 +212,7 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
             MessageRow = itemView.findViewById(R.id.userMessagesRow);
 
             // Layout for friend
-            senderId = itemView.findViewById(R.id.senderTime);
+            senderTime = itemView.findViewById(R.id.senderTime);
             receivedMessage = itemView.findViewById(R.id.senderMessage);
             senderImage = itemView.findViewById(R.id.senderImage);
             senderSentImage = itemView.findViewById(R.id.senderSentImage);
