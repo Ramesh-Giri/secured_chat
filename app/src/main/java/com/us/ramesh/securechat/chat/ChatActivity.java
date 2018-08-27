@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,7 +14,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -25,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,7 +35,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.pkmmte.view.CircularImageView;
@@ -49,7 +45,6 @@ import com.us.ramesh.securechat.all_users.activity.ShowUsers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -89,6 +84,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     private MessageAdapter mMessageAdapter;
     private final List<MessageModel> messageList = new ArrayList<>();
 
+    
 
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
     private int mCurrentPage = 1;
@@ -176,13 +172,14 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         loadmessages();
 
-
         if (receiver_Image != null && !receiver_Image.equals("")) {
             Uri profileUri = Uri.parse(receiver_Image);
             Picasso.with(ChatActivity.this)
                     .load(profileUri)
                     .into(userImage);
         }
+
+
 
 
         getSupportActionBar().setTitle(receiver_name);
@@ -222,7 +219,6 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
         });
 
-
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -233,6 +229,9 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                     try {
                         encMessage = encrypt(message, receiver_id);
+
+                        //CODE TO STEGO, WRITE HERE
+
                         sendmessage(encMessage);
 
                     } catch (Exception e) {
