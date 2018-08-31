@@ -3,10 +3,14 @@ package com.us.ramesh.securechat.chat;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +22,17 @@ import android.widget.Toast;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.us.ramesh.securechat.R;
 import com.us.ramesh.securechat.Utils.SecureChatPreference;
 import com.us.ramesh.securechat.Utils.TimeAgo;
+import com.us.ramesh.securechat.chat.Stegonapraphy.ProcessImage;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +41,8 @@ import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+
+import static android.support.constraint.Constraints.TAG;
 
 public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleStringRecyclerViewAdapter> {
 
@@ -47,7 +60,7 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
     String receiver_image;
     String decString;
 
-
+    ProcessImage process_image;
     String FROM;
 
     public MessageAdapter(List<MessageModel> mMessageList, Context context) {
@@ -79,7 +92,7 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
     @Override
     public void onBindViewHolder(final MessageAdapter.SimpleStringRecyclerViewAdapter viewHolder, int position) {
         MessageModel data = mMessageList.get(position);
-
+        process_image = new ProcessImage();
 
         if (getItemViewType(position) == TYPE_RECEIVED) {
             String message = data.getMessage();
@@ -230,23 +243,49 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
                     builder.setItems(options, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int i) {
-                            String msz = mMessageList.get(getAdapterPosition()).getMessage();
 
-                            if (i == 0) {
-                                try {
-                                    decString = decrypt(msz, mCurrentUser);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                            if(mMessageList.get(getAdapterPosition()).getType().equalsIgnoreCase("image")) {
+                                String imageUrl = mMessageList.get(getAdapterPosition()).getSentImage();
+
+                                if(imageUrl != null || imageUrl != ""){
+                                    final String[] message_to_show = {""};
+
+                                    Picasso.with(ctx).load(imageUrl).into(new Target() {
+                                        @Override
+                                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                            message_to_show[0] = process_image.displayMessage(bitmap);
+
+                                            decryptText(message_to_show[0]);
+                                        }
+
+                                        @Override
+                                        public void onBitmapFailed(Drawable errorDrawable) {
+                                            Log.e(TAG, "The image was not obtained");
+                                        }
+
+                                        @Override
+                                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                                            //Here you should place a loading gif in the ImageView to
+                                            //while image is being obtained.
+                                        }
+                                    });
+
+
                                 }
-                                if (decString != null && decString.length() > 0) {
-                                    Toast.makeText(ctx, decString, Toast.LENGTH_SHORT).show();
-                                    decString = "";
-                                } else {
-                                    Toast.makeText(ctx, "Cannot decrpyt", Toast.LENGTH_SHORT).show();
+
+                            }else {
+                                String msz = mMessageList.get(getAdapterPosition()).getMessage();
+
+                                if (i == 0) {
+
+                                    decryptText(msz);
+
+
                                 }
-
-
                             }
+
+
                         }
 
                     });
@@ -275,5 +314,20 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
 
         } else
             return str;
+    }
+
+    public void decryptText(String msz){
+
+        try {
+            decString = decrypt(msz, mCurrentUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (decString != null && decString.length() > 0) {
+            Toast.makeText(ctx, decString, Toast.LENGTH_SHORT).show();
+            decString = "";
+        } else {
+            Toast.makeText(ctx, "Cannot decrpyt", Toast.LENGTH_SHORT).show();
+        }
     }
 }

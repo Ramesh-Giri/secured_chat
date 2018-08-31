@@ -1,10 +1,19 @@
 package com.us.ramesh.securechat.chat;
 
 import android.app.ProgressDialog;
+import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.ParcelFileDescriptor;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -42,9 +51,12 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.us.ramesh.securechat.R;
 import com.us.ramesh.securechat.all_users.activity.ShowUsers;
+import com.us.ramesh.securechat.chat.Stegonapraphy.ProcessImage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -68,6 +80,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private String mCurrentUserId;
     private static final int SELECT_PHOTO = 100;
+    private static final int SELECT_STEGO_PICTURE = 1;
 
     DatabaseReference user_msg_push;
 
@@ -84,8 +97,8 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     private MessageAdapter mMessageAdapter;
     private final List<MessageModel> messageList = new ArrayList<>();
 
-    
 
+    boolean isStego = false;
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
     private int mCurrentPage = 1;
     FirebaseStorage storage;
@@ -103,14 +116,26 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     private String mLastKey = "";
     private String mPrevKey = "";
 
+
+
     String message;
     String encMessage;
 
+    String selected_stego_image_URL =""; // to store the path of chosen image
+
+    Bitmap stegoBit;
+
+    ProcessImage processImage;
+
+    String stegoImageURL;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        processImage = new ProcessImage();
+
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -165,7 +190,9 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
             @Override
             public void onClick(View view) {
 
-                addImage();
+                isStego = false;
+                addImage(isStego);
+
             }
         });
 
@@ -178,8 +205,6 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                     .load(profileUri)
                     .into(userImage);
         }
-
-
 
 
         getSupportActionBar().setTitle(receiver_name);
@@ -226,14 +251,16 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                 if (enc) {
                     /* Encrypted message is send */
-
                     try {
                         encMessage = encrypt(message, receiver_id);
 
                         //CODE TO STEGO, WRITE HERE
 
-                        sendmessage(encMessage);
+                        //sendmessage(encMessage);
 
+                        isStego = true;
+                        addImage(isStego);
+                        et_message.setText("");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -459,30 +486,61 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
 
-    public void addImage() {
+    public void addImage(boolean stego) {
 
-        //Pick Image from gallery
         Intent photoPickerIntent = new Intent();
         photoPickerIntent.setType("image/*");
         photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(photoPickerIntent, "SELECT IMAGE"), SELECT_PHOTO);
+        if (stego) {
+            startActivityForResult(Intent.createChooser(photoPickerIntent, "SELECT IMAGE"), SELECT_STEGO_PICTURE);
+        } else {
+            startActivityForResult(Intent.createChooser(photoPickerIntent, "SELECT IMAGE"), SELECT_PHOTO);
+        }
+        //Pick Image from gallery
+
+
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == SELECT_PHOTO && resultCode == RESULT_OK) {
-            Uri selectedImage = data.getData();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Uri selectedImage;
+
+        if (resultCode == RESULT_OK && requestCode == SELECT_STEGO_PICTURE) {
+
+            selectedImage = data.getData();
             CropImage.activity(selectedImage)
                     .setAspectRatio(2, 3)
                     .start(this);
 
+            try {
+                ParcelFileDescriptor parcelFileDescriptor = getContentResolver().openFileDescriptor(selectedImage, "r");
+                FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+                Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+
+                sendStegoImage(image);
+
+
+                parcelFileDescriptor.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+
+        }
+
+        if (resultCode == RESULT_OK && requestCode == SELECT_PHOTO) {
+            selectedImage = data.getData();
+            CropImage.activity(selectedImage)
+                    .setAspectRatio(2, 3)
+                    .start(this);
         }
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
+
 
                 progressDialog = new ProgressDialog(this);
                 progressDialog.setMessage("Sending...");
@@ -493,92 +551,121 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                 resultUri = result.getUri();
 
-                    final File thumb_filePath = new File(resultUri.getPath());
+                final File thumb_filePath = new File(resultUri.getPath());
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+                if (isStego) {
+
+                    stegoBit.compress(Bitmap.CompressFormat.PNG, 80, baos);
+
+                } else {
+
                     Bitmap thumb_bitmap = new Compressor(this)
                             .setMaxWidth(350)
                             .setMaxHeight(350)
                             .setQuality(80)
                             .compressToBitmap(thumb_filePath);
 
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     thumb_bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
-                    final byte[] thumb_byte = baos.toByteArray();
 
-                    Calendar c = Calendar.getInstance();
+                }
 
-
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String mydate = format.format(c.getTime());
-
-                    final StorageReference thumb_filepath = storageRef.child("sent_images").child(mydate + ".jpg");
-
-                    thumb_filepath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
-
-                            if (task.isSuccessful()) {
-
-                                UploadTask uploadThumb = thumb_filepath.putBytes(thumb_byte);
-                                uploadThumb.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> thumbTask) {
-
-                                        final String thumb_downloadURL = thumbTask.getResult().getDownloadUrl().toString();
-
-                                        if (thumbTask.isSuccessful()) {
-                                            String current_user_ref = "Messages/" + mCurrentUserId + "/" + receiver_id;
-                                            String chat_user_ref = "Messages/" + receiver_id + "/" + mCurrentUserId;
-
-                                            user_msg_push = mRootRef.child("Messages").child(mCurrentUserId).child(receiver_id).push();
-                                            String push_id = user_msg_push.getKey();
+                final byte[] thumb_byte = baos.toByteArray();
+                Calendar c = Calendar.getInstance();
 
 
-                                            Map sentImage = new HashMap();
-                                            sentImage.put("sentImage", thumb_downloadURL);
-                                            sentImage.put("message", "");
-                                            sentImage.put("seen", false);
-                                            sentImage.put("type", "image");
-                                            sentImage.put("time", ServerValue.TIMESTAMP);
-                                            sentImage.put("from", mCurrentUserId);
-
-                                            Map messageUserMap = new HashMap();
-                                            messageUserMap.put(current_user_ref + "/" + push_id, sentImage);
-                                            messageUserMap.put(chat_user_ref + "/" + push_id, sentImage);
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String mydate = format.format(c.getTime());
 
 
-                                            mRootRef.updateChildren(messageUserMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
+                final StorageReference thumb_filepath = storageRef.child("sent_images").child(mydate + ".jpg");
+                thumb_filepath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
 
-                                                    if (thumbTask.isSuccessful()) {
+                        if (task.isSuccessful()) {
 
-                                                        progressDialog.dismiss();
-                                                        resultUri=null;
+                            UploadTask uploadThumb = thumb_filepath.putBytes(thumb_byte);
+                            uploadThumb.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> thumbTask) {
+
+                                    final String thumb_downloadURL = thumbTask.getResult().getDownloadUrl().toString();
+
+                                    if (thumbTask.isSuccessful()) {
+                                        String current_user_ref = "Messages/" + mCurrentUserId + "/" + receiver_id;
+                                        String chat_user_ref = "Messages/" + receiver_id + "/" + mCurrentUserId;
+
+                                        user_msg_push = mRootRef.child("Messages").child(mCurrentUserId).child(receiver_id).push();
+                                        String push_id = user_msg_push.getKey();
 
 
-                                                    }
+                                        Map sentImage = new HashMap();
+                                        sentImage.put("sentImage", thumb_downloadURL);
+                                        sentImage.put("message", "");
+                                        sentImage.put("seen", false);
+                                        sentImage.put("type", "image");
+                                        sentImage.put("time", ServerValue.TIMESTAMP);
+                                        sentImage.put("from", mCurrentUserId);
+
+                                        Map messageUserMap = new HashMap();
+                                        messageUserMap.put(current_user_ref + "/" + push_id, sentImage);
+                                        messageUserMap.put(chat_user_ref + "/" + push_id, sentImage);
+
+
+                                        mRootRef.updateChildren(messageUserMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+
+                                                if (thumbTask.isSuccessful()) {
+
+                                                    progressDialog.dismiss();
+                                                    resultUri = null;
+
+
                                                 }
-                                            });
-                                        } else {
-                                            Toast.makeText(getApplicationContext(), "Error in uploading thumbnail.", Toast.LENGTH_SHORT).show();
-                                        }
+                                            }
+                                        });
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Error in uploading thumbnail.", Toast.LENGTH_SHORT).show();
                                     }
-                                });
+                                }
+                            });
 
 
-                            } else {
-                                Toast.makeText(getApplicationContext(), "ERROR!!!", Toast.LENGTH_SHORT).show();
-                                progressDialog.dismiss();
-                            }
-
-
+                        } else {
+                            Toast.makeText(getApplicationContext(), "ERROR!!!", Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
                         }
-                    });
+
+
+                    }
+                });
+
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
         }
     }
+
+
+    public void sendStegoImage(Bitmap stegoImage) {
+
+
+        if (stegoImage != null) {
+
+            stegoBit = processImage.createStegoImage(stegoImage, encMessage);
+            Toast.makeText(this, stegoBit.toString(), Toast.LENGTH_SHORT).show();
+
+
+        } else {
+            Toast.makeText(ChatActivity.this, "image file not selected...", Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+
 
 }
