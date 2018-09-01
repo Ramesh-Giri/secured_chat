@@ -80,7 +80,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private String mCurrentUserId;
     private static final int SELECT_PHOTO = 100;
-    private static final int SELECT_STEGO_PICTURE = 1;
+
 
     DatabaseReference user_msg_push;
 
@@ -117,11 +117,10 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     private String mPrevKey = "";
 
 
-
     String message;
     String encMessage;
 
-    String selected_stego_image_URL =""; // to store the path of chosen image
+    String selected_stego_image_URL = ""; // to store the path of chosen image
 
     Bitmap stegoBit;
 
@@ -491,11 +490,9 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         Intent photoPickerIntent = new Intent();
         photoPickerIntent.setType("image/*");
         photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
-        if (stego) {
-            startActivityForResult(Intent.createChooser(photoPickerIntent, "SELECT IMAGE"), SELECT_STEGO_PICTURE);
-        } else {
-            startActivityForResult(Intent.createChooser(photoPickerIntent, "SELECT IMAGE"), SELECT_PHOTO);
-        }
+
+        startActivityForResult(Intent.createChooser(photoPickerIntent, "SELECT IMAGE"), SELECT_PHOTO);
+
         //Pick Image from gallery
 
 
@@ -506,35 +503,13 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         Uri selectedImage;
 
-        if (resultCode == RESULT_OK && requestCode == SELECT_STEGO_PICTURE) {
+        if (resultCode == RESULT_OK) {
 
             selectedImage = data.getData();
             CropImage.activity(selectedImage)
                     .setAspectRatio(2, 3)
                     .start(this);
 
-            try {
-                ParcelFileDescriptor parcelFileDescriptor = getContentResolver().openFileDescriptor(selectedImage, "r");
-                FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-                Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-
-                sendStegoImage(image);
-
-
-                parcelFileDescriptor.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-
-        }
-
-        if (resultCode == RESULT_OK && requestCode == SELECT_PHOTO) {
-            selectedImage = data.getData();
-            CropImage.activity(selectedImage)
-                    .setAspectRatio(2, 3)
-                    .start(this);
         }
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -555,17 +530,17 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
+                Bitmap thumb_bitmap = new Compressor(this)
+                        .setMaxWidth(350)
+                        .setMaxHeight(350)
+                        .setQuality(80)
+                        .compressToBitmap(thumb_filePath);
                 if (isStego) {
 
+                    sendStegoImage(thumb_bitmap);
                     stegoBit.compress(Bitmap.CompressFormat.PNG, 80, baos);
 
                 } else {
-
-                    Bitmap thumb_bitmap = new Compressor(this)
-                            .setMaxWidth(350)
-                            .setMaxHeight(350)
-                            .setQuality(80)
-                            .compressToBitmap(thumb_filePath);
 
                     thumb_bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
 
@@ -657,15 +632,12 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         if (stegoImage != null) {
 
             stegoBit = processImage.createStegoImage(stegoImage, encMessage);
-            Toast.makeText(this, stegoBit.toString(), Toast.LENGTH_SHORT).show();
-
 
         } else {
             Toast.makeText(ChatActivity.this, "image file not selected...", Toast.LENGTH_LONG)
                     .show();
         }
     }
-
 
 
 }
