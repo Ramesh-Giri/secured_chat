@@ -80,7 +80,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private String mCurrentUserId;
     private static final int SELECT_PHOTO = 100;
-
+    private static final int SELECT_STEGO_PICTURE = 1;
 
     DatabaseReference user_msg_push;
 
@@ -490,9 +490,11 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         Intent photoPickerIntent = new Intent();
         photoPickerIntent.setType("image/*");
         photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
-
-        startActivityForResult(Intent.createChooser(photoPickerIntent, "SELECT IMAGE"), SELECT_PHOTO);
-
+        if (stego) {
+            startActivityForResult(Intent.createChooser(photoPickerIntent, "SELECT IMAGE"), SELECT_STEGO_PICTURE);
+        } else {
+            startActivityForResult(Intent.createChooser(photoPickerIntent, "SELECT IMAGE"), SELECT_PHOTO);
+        }
         //Pick Image from gallery
 
 
@@ -503,13 +505,20 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         Uri selectedImage;
 
-        if (resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK && requestCode == SELECT_STEGO_PICTURE) {
 
             selectedImage = data.getData();
             CropImage.activity(selectedImage)
                     .setAspectRatio(2, 3)
                     .start(this);
 
+        }
+
+        if (resultCode == RESULT_OK && requestCode == SELECT_PHOTO) {
+            selectedImage = data.getData();
+            CropImage.activity(selectedImage)
+                    .setAspectRatio(2, 3)
+                    .start(this);
         }
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {

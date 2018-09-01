@@ -118,16 +118,7 @@ public class ProcessImage {
 				return false;
 			}
 
-	//====================== storing bitmap generated as png file =============================	
-	public String bitmapToFile(String file_name){
 
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	        bmp1.compress(Bitmap.CompressFormat.JPEG, 0, baos);
-
-
-	    return "Message Sent!!!";
-	}
-	
 	
 	public String displayMessage(Bitmap bmp){
 		// ========== variable declaration ============
