@@ -20,7 +20,6 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:theme="@style/ThemeOverlay.AppCompat.Light" />
 
-
     </android.support.design.widget.AppBarLayout>
 
 

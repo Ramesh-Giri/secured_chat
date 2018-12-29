@@ -518,8 +518,6 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                 progressDialog = new ProgressDialog(this);
                 progressDialog.setMessage("Sending...");
-                progressDialog.setMax(100);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 progressDialog.setCancelable(true);
                 progressDialog.show();
 
