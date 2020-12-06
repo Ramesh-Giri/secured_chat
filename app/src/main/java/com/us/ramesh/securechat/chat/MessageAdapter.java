@@ -138,7 +138,6 @@ public class MessageAdapter extends RecyclerSwipeAdapter<MessageAdapter.SimpleSt
             String type = data.getType();
 
             if(type.equals("text")) {
-
                 if (message != null && message.length() > 0) {
                     viewHolder.sentImageCard.setVisibility(View.GONE);
                     viewHolder.currentMessage.setText(message);

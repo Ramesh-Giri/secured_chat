@@ -163,7 +163,6 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         //creates a storage reference
         storageRef = FirebaseStorage.getInstance().getReference();
 
-
         mLinearLayoutmanager = new LinearLayoutManager(this);
         rv_messagesList.setLayoutManager(mLinearLayoutmanager);
         mMessageAdapter.setImage(receiver_Image);

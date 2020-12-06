@@ -1,8 +1,6 @@
 package com.us.ramesh.securechat.all_users.activity;
 
 import android.app.ProgressDialog;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,12 +16,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.pkmmte.view.CircularImageView;
 import com.us.ramesh.securechat.R;
 import com.us.ramesh.securechat.Utils.NetworkUtils;
 import com.us.ramesh.securechat.Utils.SecureChatPreference;
-import com.us.ramesh.securechat.login.model.RegisterModel;
 import com.us.ramesh.securechat.all_users.adapter.UserAdapter;
+import com.us.ramesh.securechat.login.model.RegisterModel;
 
 import java.util.ArrayList;
 
@@ -44,8 +41,6 @@ public class ShowUsers extends AppCompatActivity implements SwipeRefreshLayout.O
     UserAdapter userAdapter;
 
     ArrayList<RegisterModel> userArrayList = new ArrayList<>();
-
-
     private SwipeRefreshLayout mSwipeRefreshLayout;  //object for swipe refresh
 
     private LinearLayoutManager linearLayoutManager;  //layout manager for RecyclerView
@@ -83,7 +78,6 @@ public class ShowUsers extends AppCompatActivity implements SwipeRefreshLayout.O
 
         if (NetworkUtils.isConnected(this)) {
         } else {
-
             Toast.makeText(this, "You are currently offline", Toast.LENGTH_LONG).show();
         }
 
@@ -91,9 +85,9 @@ public class ShowUsers extends AppCompatActivity implements SwipeRefreshLayout.O
 
     @Override
     public void onRefresh() {
-        showData();
 
         if (NetworkUtils.isConnected(this)) {
+            showData();
         } else {
             if (mSwipeRefreshLayout.isRefreshing()) {
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -104,14 +98,11 @@ public class ShowUsers extends AppCompatActivity implements SwipeRefreshLayout.O
     }
 
     public void showData() {
-
-
         showProgressDialog();
 
         mFirebaseDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
 
                 if (dataSnapshot != null && dataSnapshot.getValue() != null) {
 
